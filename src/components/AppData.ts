@@ -74,7 +74,7 @@ export class AppState extends Model<IAppState> {
         this.products.forEach(item => item.inBasket = false);
     }
 
-    validateContacts() {
+    validateContacts(): void {
         this.validationErrors = {};
         if (!this.contacts.address) {
             this.validationErrors.address = 'Необходимо указать адрес';
