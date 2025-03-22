@@ -55,32 +55,28 @@ export class Card extends Component<IProduct> {
   }
 
   set title(value: string) {
-    this._title.textContent = value;
+    this.setText(this._title, value);
   }
   get title(): string {
     return this._title.textContent || '';
   }
 
   set image(value: string) {
-    this._image.src = CDN_URL + value;
+    this.setImage(this._image, CDN_URL + value);
   }
 
   set inBasket(value: boolean) {
-    if (!this._button.disabled) {
-      this._button.disabled = value;
-    }
+    this.setDisabled(this._button, value);
   }
 
   set price(value: number | null) {
-    this._price.textContent = value
-      ? value.toString() + ' синапсов' : 'Бесценно';
-    if (this._button && !value) {
-      this._button.disabled = true;
-    }
+    this.setText(this._price, value
+      ? value.toString() + ' синапсов' : 'Бесценно')
+    this.setDisabled(this._button, !value);
   }
 
   set category(value: string) {
-    this._category.textContent = value;
+    this.setText(this._category, value);
     Object.values(this.categoryModifiers).forEach(modifier => {
       this._category.classList.remove(`${this.blockName}__category_${modifier}`);
     });
@@ -109,6 +105,6 @@ export class CatalogItemPreview extends Card {
   }
 
   set description(value: string) {
-    this._description.textContent = value;
+    this.setText( this._description, value);
   }
 }

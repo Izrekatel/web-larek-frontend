@@ -30,6 +30,7 @@ export class Success extends Component<ISuccess> {
   }
 
   set description(value: number) {
-    this._description.textContent = 'Списано ' + value.toString() + ' синапсов'
+    const text = 'Списано ' + value.toString() + ' синапсов'
+    this.setText(this._description, text)
   }
 }

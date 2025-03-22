@@ -75,7 +75,7 @@ events.on('card:select', (item: Product) => {
 
 events.on('card:toBasket', (item: Product) => {
     item.inBasket = true;
-    page.counter = appData.getProductsInBasket().length;
+    events.emit('basket:change');
     modal.close();
 })
 
@@ -103,14 +103,14 @@ events.on('basket:open', () => {
   });
 });
 
+events.on('basket:change', () => {
+  page.counter = appData.getProductsInBasket().length;
+  events.emit('basket:open');
+})
+
 events.on('basket:delete', (item: Product) => {
     item.inBasket = false;
-    basket.price = appData.getBasketTotal();
-    page.counter = appData.getProductsInBasket().length;
-    basket.refreshIndices();
-    if (!appData.getProductsInBasket().length) {
-        basket.disableButton();
-    }
+    events.emit('basket:change');
 })
 
 events.on('basket:order', () => {
