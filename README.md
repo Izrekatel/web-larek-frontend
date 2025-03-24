@@ -300,7 +300,7 @@ yarn build
 
     contacts: IPaymentInformation — контактная информация и данные для оплаты.
 
-    validationError: FormErrors — ошибки валидации формы.
+    validationErrors: FormErrors — ошибки валидации формы.
 
 Методы:
 

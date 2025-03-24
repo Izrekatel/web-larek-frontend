@@ -38,6 +38,28 @@ const success = new Success('order-success', cloneTemplate(successTemplate), {
   }
 })
 
+const renderBasketItems = () => {
+    const basketItems = appData.getProductsInBasket().map((item, index) => {
+        const storeItem = new ItemBasket(
+            'card',
+            cloneTemplate(cardBasketTemplate),
+            {
+                onClick: () => events.emit('basket:delete', item)
+            }
+        );
+        return storeItem.render({
+            title: item.title,
+            price: item.price,
+            index: index + 1,
+        });
+    });
+    modal.render({
+        content: basket.render({
+            list: basketItems,
+            price: appData.getBasketTotal(),
+        }),
+    });
+};
 
 api.get('/product')
   .then((res: ApiListResponse<Product>) => {
@@ -79,37 +101,15 @@ events.on('card:toBasket', (item: Product) => {
     modal.close();
 })
 
-events.on('basket:open', () => {
-  page.locked = true
-  const basketItems = appData.getProductsInBasket().map((item, index) => {
-    const storeItem = new ItemBasket(
-      'card',
-      cloneTemplate(cardBasketTemplate),
-      {
-        onClick: () => events.emit('basket:delete', item)
-      }
-    );
-    return storeItem.render({
-      title: item.title,
-      price: item.price,
-      index: index + 1,
-    });
-  });
-  modal.render({
-    content: basket.render({
-      list: basketItems,
-      price: appData.getBasketTotal(),
-    }),
-  });
-});
+events.on('basket:open', () => renderBasketItems());
 
 events.on('basket:change', () => {
   page.counter = appData.getProductsInBasket().length;
-  events.emit('basket:open');
 })
 
 events.on('basket:delete', (item: Product) => {
     item.inBasket = false;
+    renderBasketItems();
     events.emit('basket:change');
 })
 
@@ -123,18 +123,27 @@ events.on('basket:order', () => {
             }
         ),
     });
+    events.emit('orderFormErrors:change');
 });
 
 events.on('orderFormErrors:change', () => {
     const { payment, address } = appData.validationErrors;
-    order.valid = !payment && !address;
+    const isValid = !payment && !address;
+    order.valid = isValid;
     order.errors = Object.values({ payment, address }).filter(i => !!i).join('; ');
+    if (isValid && appData.contacts.address && appData.contacts.payment) {
+        order.valid = true;
+    }
 });
 
 events.on('contactsFormErrors:change', () => {
     const { email, phone } = appData.validationErrors;
-    contacts.valid = !email && !phone;
+    const isValid = !email && !phone;
+    contacts.valid = isValid;
     contacts.errors = Object.values({ phone, email }).filter(i => !!i).join('; ');
+    if (isValid && appData.contacts.email && appData.contacts.phone) {
+      contacts.valid = true;
+    }
 });
 
 events.on(/^(order|contacts)\.(.+):change$/, (data: { field: keyof PaymentInformation, value: string }) => {
@@ -150,6 +159,8 @@ events.on('order:submit', () => {
             }
         ),
     });
+    events.emit('contactsFormErrors:change');
+
 })
 
 events.on('contacts:submit', () => {

@@ -45,7 +45,7 @@ export interface IProductAPI {
 export interface IAppState {
 	products?: IProduct[];
 	contacts: IPaymentInformation;
-	validationError: FormErrors;
+	validationErrors: FormErrors;
 
 	loadProducts(products: IProduct[]): void;
 	fillContacts(contacts: Partial<IPaymentInformation>): void;
@@ -54,4 +54,5 @@ export interface IAppState {
 	getBasketTotal(): number;
 	clearBasket(): void;
 	validateContacts(): void;
+	clearOrderForm(): void;
   }

@@ -38,7 +38,7 @@ export class Basket extends Component<IBasket> {
   }
 
   disableButton() {
-    this.setDisabled(this._button, true)
+    this.setDisabled(this._button, true);
   }
 }
 
